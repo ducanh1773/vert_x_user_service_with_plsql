@@ -1,18 +1,31 @@
 package com.example.demo;
 
-import io.vertx.core.Future;
-import io.vertx.core.VerticleBase;
+import com.example.demo.handler.UserHandler;
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Vertx;
+import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.BodyHandler;
 
-public class MainVerticle extends VerticleBase {
+public class MainVerticle extends AbstractVerticle {
+
+  public static void main(String[] args) {
+    Vertx.vertx().deployVerticle(new MainVerticle());
+  }
 
   @Override
-  public Future<?> start() {
-    return vertx.createHttpServer().requestHandler(req -> {
-      req.response()
-        .putHeader("content-type", "text/plain")
-        .end("Hello from Vert.x!");
-    }).listen(8888).onSuccess(http -> {
-      System.out.println("HTTP server started on port 8888");
-    });
+  public void start() {
+    Router router = Router.router(vertx);
+    router.route().handler(BodyHandler.create());
+
+    UserHandler handler = new UserHandler();
+
+    router.post("/users").handler(handler::create);
+    router.get("/users/:id").handler(handler::getById);
+    router.put("/users/:id").handler(handler::update);
+    router.delete("/users/:id").handler(handler::delete);
+
+    vertx.createHttpServer()
+      .requestHandler(router)
+      .listen(9992);
   }
 }
