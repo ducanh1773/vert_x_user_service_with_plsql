@@ -61,7 +61,18 @@ public class UserRepository {
           .put("email", users.getEmail())
           .put("message", "User update successfully");
       });
-
   }
+
+  public Future<List<JsonObject>> getAllByProcedure(){
+    return client.query("CALL get_all_users()")
+      .execute()
+      .map(rows -> {
+        List<JsonObject> list = new LinkedList<>();
+        rows.forEach(row -> list.add(row.toJson()));
+        return list;
+      });
+  }
+
+
 
 }

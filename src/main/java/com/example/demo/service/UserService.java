@@ -6,6 +6,8 @@ import io.vertx.core.Future;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
+import java.util.List;
+
 public class UserService {
   private final UserRepository userRepository;
 
@@ -27,5 +29,9 @@ public class UserService {
 
   public Future<JsonObject> updateUser(Users users){
     return userRepository.updateUser(users);
+  }
+
+  public Future<List<JsonObject>> getAllByProcedure(){
+    return userRepository.getAllByProcedure();
   }
 }

@@ -2,6 +2,7 @@ package com.example.demo.handler;
 
 import com.example.demo.model.Users;
 import com.example.demo.service.UserService;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
@@ -24,6 +25,23 @@ public class UserHandler {
         err.printStackTrace(); // In lỗi ra màn hình đen (Console) để xem báo gì
         routingContext.fail(500, err);
       });
+  }
+
+  public void getAllByProcedure(RoutingContext ctx) {
+    ctx.vertx().eventBus().<JsonArray>request("user.find.all.by.plsql", new JsonObject(), reply -> {
+      if (reply.succeeded()) {
+        ctx.response()
+          .putHeader("content-type", "application/json")
+          .setStatusCode(200)
+          .end(reply.result().body().encode());
+      } else {
+        ctx.response()
+          .setStatusCode(500)
+          .putHeader("content-type", "application/json")
+          .end(new JsonObject().put("error", reply.cause().getMessage()).encode());
+      }
+    });
+
   }
 
   public void findById(RoutingContext ctx) {
@@ -99,5 +117,8 @@ public class UserHandler {
       }
     });
 
+
   }
+
+
 }
