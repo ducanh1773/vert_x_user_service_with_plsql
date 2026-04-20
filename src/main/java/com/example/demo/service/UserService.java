@@ -24,4 +24,8 @@ public class UserService {
   public Future<JsonObject> createUser(Users users){
     return userRepository.createUser(users);
   }
+
+  public Future<JsonObject> updateUser(Users users){
+    return userRepository.updateUser(users);
+  }
 }

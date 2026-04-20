@@ -50,5 +50,18 @@ public class UserRepository {
       });
   }
 
+  public Future<JsonObject> updateUser(Users users) {
+    return client
+      .preparedQuery("UPDATE user_vertx SET username = ? , email = ? WHERE id = ?")
+      .execute(Tuple.of(users.getUserName(), users.getEmail(), users.getId()))
+      .map(rows -> {
+        return new JsonObject()
+          .put("id", users.getId())
+          .put("username", users.getUserName())
+          .put("email", users.getEmail())
+          .put("message", "User update successfully");
+      });
+
+  }
 
 }

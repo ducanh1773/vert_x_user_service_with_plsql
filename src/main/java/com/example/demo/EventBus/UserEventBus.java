@@ -17,6 +17,7 @@ public class UserEventBus extends AbstractVerticle {
     vertx.eventBus().consumer("user.create", message -> {
       JsonObject body = (JsonObject) message.body();
 
+
       // Chuyển Json sang Model Users
       Users user = new Users(
         body.getInteger("id"),
@@ -29,5 +30,26 @@ public class UserEventBus extends AbstractVerticle {
         .onSuccess(message::reply) // Trả kết quả về cho Handler
         .onFailure(err -> message.fail(500, err.getMessage()));
     });
+
+    // THÊM MỚI: Consumer cho Update
+    vertx.eventBus().consumer("user.update", message -> {
+      JsonObject body = (JsonObject) message.body();
+
+      // Chuyển Json sang Model Users (giả sử bạn update dựa trên ID)
+      Users user = new Users(
+        body.getInteger("id"),
+        body.getString("username"),
+        body.getString("email")
+      );
+
+      // Gọi Service xử lý update
+      userService.updateUser(user)
+        .onSuccess(result -> message.reply(result))
+        .onFailure(err -> message.fail(500, err.getMessage()));
+    });
   }
+
+
+
+
 }

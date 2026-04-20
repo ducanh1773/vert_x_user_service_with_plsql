@@ -78,4 +78,26 @@ public class UserHandler {
     });
 
   }
+
+  public void updateUser(RoutingContext ctx){
+    JsonObject body = ctx.body().asJsonObject();
+    if(body == null){
+      ctx.response().setStatusCode(400).end("Invalid Json Body");
+      return;
+    }
+    // Gửi message sang Event Bus
+    ctx.vertx().eventBus().<JsonObject>request("user.update" , body , reply ->{
+      if(reply.succeeded()){
+        ctx.response()
+          .putHeader("content-type" , "application/json")
+          .setStatusCode(201)
+          .end(reply.result().body().encode());
+      }else {
+        ctx.response()
+          .setStatusCode(500)
+          .end(new JsonObject().put("error", reply.cause().getMessage()).encode());
+      }
+    });
+
+  }
 }

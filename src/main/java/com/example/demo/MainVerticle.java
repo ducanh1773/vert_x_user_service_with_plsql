@@ -43,6 +43,7 @@ public class MainVerticle extends AbstractVerticle {
 
     // gọi hàm qua eventBus
     router.post("/api/users").handler(handler::createUser);
+    router.post("/api/users/update").handler(handler::updateUser);
     vertx.deployVerticle(new com.example.demo.EventBus.UserEventBus(service));
 
     vertx.createHttpServer()
