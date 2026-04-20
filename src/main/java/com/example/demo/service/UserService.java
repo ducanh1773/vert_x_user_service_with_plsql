@@ -1,24 +1,27 @@
 package com.example.demo.service;
 
+import com.example.demo.model.Users;
 import com.example.demo.repository.sql.UserRepository;
+import io.vertx.core.Future;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 public class UserService {
-  private final UserRepository repo = new UserRepository();
+  private final UserRepository userRepository;
 
-  public JsonObject create(JsonObject data) {
-    return repo.insert(data);
+  public UserService(UserRepository userRepository) {
+    this.userRepository = userRepository;
   }
 
-  public JsonObject getById(int id) {
-    return repo.get(id);
+  public Future<JsonArray> getAllUsers() {
+    return userRepository.findAll().map(JsonArray::new);
   }
 
-  public JsonObject update(int id, JsonObject data) {
-    return repo.update(id, data);
+  public Future<JsonObject> getById(int id){
+    return userRepository.findById(id);
   }
 
-  public JsonObject delete(int id) {
-    return repo.delete(id);
+  public Future<JsonObject> createUser(Users users){
+    return userRepository.createUser(users);
   }
 }
