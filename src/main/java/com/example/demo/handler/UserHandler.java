@@ -116,8 +116,44 @@ public class UserHandler {
           .end(new JsonObject().put("error", reply.cause().getMessage()).encode());
       }
     });
+  }
 
+  public void getByIdByProcedure(RoutingContext ctx) {
+    try {
+      int id = Integer.parseInt(ctx.pathParam("id"));
 
+      ctx.vertx().eventBus().<JsonObject>request("user.find.by.id.plsql", id, reply -> {
+        if (reply.succeeded()) {
+          JsonObject body = reply.result().body();
+          if (body.isEmpty()) {
+            ctx.response().setStatusCode(404).end("User not found");
+          } else {
+            ctx.response()
+              .putHeader("content-type", "application/json")
+              .end(body.encode());
+          }
+        } else {
+          ctx.fail(500, reply.cause());
+        }
+      });
+    } catch (NumberFormatException e) {
+      ctx.response().setStatusCode(400).end("Invalid ID format");
+    }
+  }
+
+  public void handleSaveUser(RoutingContext ctx) {
+    JsonObject body = ctx.body().asJsonObject();
+
+    ctx.vertx().eventBus().<JsonObject>request("user.save.plsql", body, reply -> {
+      if (reply.succeeded()) {
+        ctx.response()
+          .setStatusCode(200)
+          .putHeader("content-type", "application/json")
+          .end(reply.result().body().encode());
+      } else {
+        ctx.fail(500, reply.cause());
+      }
+    });
   }
 
 

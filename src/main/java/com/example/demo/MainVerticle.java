@@ -41,11 +41,16 @@ public class MainVerticle extends AbstractVerticle {
     router.get("/api/users").handler(handler::findAll);
     router.get("/api/users/:id").handler(handler::findById);
 
-    // gọi hàm qua eventBus
+    // gọi hàm qua eventBus và dùng trực tiếp câu lệnh trên repository
     router.post("/api/users").handler(handler::createUser);
     router.post("/api/users/update").handler(handler::updateUser);
 
+
+    // gọi qua procedure
     router.get("/api/plsql/users").handler(handler::getAllByProcedure);
+    router.get("/api/plsql/users/:id").handler(handler::getByIdByProcedure);
+    router.post("/api/plsql/users").handler(handler::handleSaveUser);
+
 
     vertx.deployVerticle(new com.example.demo.EventBus.UserEventBus(service));
 

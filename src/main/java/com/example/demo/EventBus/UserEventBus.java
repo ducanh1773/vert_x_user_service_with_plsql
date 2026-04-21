@@ -59,6 +59,26 @@ public class UserEventBus extends AbstractVerticle {
         .onFailure(err -> message.fail(500, err.getMessage()));
     });
 
+    vertx.eventBus().consumer("user.find.by.id.plsql" , message ->{
+      Integer id = (Integer) message.body();
+      userService.getByIdProcedure(id) // Giả sử bạn đã thêm hàm này vào UserService
+        .onSuccess(message::reply)
+        .onFailure(err -> message.fail(500, err.getMessage()));
+    });
+
+    vertx.eventBus().consumer("user.save.plsql", message -> {
+      JsonObject body = (JsonObject) message.body();
+      Users user = new Users(
+        body.getInteger("id"),
+        body.getString("username"),
+        body.getString("email")
+      );
+
+      userService.saveUserProcedure(user)
+        .onSuccess(message::reply)
+        .onFailure(err -> message.fail(500, err.getMessage()));
+    });
+
 
   }
 }

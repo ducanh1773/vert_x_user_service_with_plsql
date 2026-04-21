@@ -34,4 +34,12 @@ public class UserService {
   public Future<List<JsonObject>> getAllByProcedure(){
     return userRepository.getAllByProcedure();
   }
+
+  public Future<JsonObject> getByIdProcedure(int id){
+    return userRepository.getByIdProcedure(id);
+  }
+
+  public Future<JsonObject> saveUserProcedure(Users users){
+    return userRepository.saveUserProcedure(users);
+  }
 }
